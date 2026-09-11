@@ -18,19 +18,20 @@
   .head .wrap { display:flex; align-items:center; gap:8px; height:60px; }
   .logo { width:32px; height:32px; border-radius:8px; background:var(--brand); color:#fff; display:grid; place-items:center; font-weight:800; }
   .head small { color:var(--muted); font-size:13px; margin-left:4px; }
-  .hero { display:grid; grid-template-columns:1fr 460px; gap:40px; align-items:start; padding-top:56px; padding-bottom:56px; }
+  .hero { display:grid; grid-template-columns:1fr 460px; gap:40px; align-items:start; padding-top:28px; padding-bottom:28px; }
   .copy { padding-top:60px; }
   .copy h1 { font-size:38px; line-height:1.3; letter-spacing:-1px; margin:0; font-weight:800; }
   .copy h1 span { color:var(--brand); }
   .copy p { margin:20px 0 0; font-size:18px; line-height:1.7; color:var(--muted); }
   /* 설치 도우미 제니 — 한 단계씩 묻고 답 받고 */
   .guide { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 1px 3px rgba(15,23,42,.06);
-           display:flex; flex-direction:column; height:640px; max-height:80vh; }
+           display:flex; flex-direction:column; height:560px; max-height:calc(100vh - 150px); }
   .guide .top { padding:14px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; }
   .guide .top b { font-size:16px; }
   .guide .top .bar { margin-left:auto; width:120px; height:6px; border-radius:6px; background:var(--line); overflow:hidden; }
   .guide .top .bar i { display:block; height:100%; width:0; background:var(--brand); transition:width .3s; }
   .guide .top small { color:var(--muted); font-size:12px; }
+  .guide .top select { height:30px; border:1px solid var(--line); border-radius:8px; background:#fff; font:inherit; font-size:12px; color:var(--muted); }
   #log { flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:10px; }
   .j { align-self:flex-end; text-align:right; max-width:92%; white-space:pre-wrap; line-height:1.65; }
   .j::before { content:"제니"; display:block; font-size:11px; font-weight:700; color:var(--brand); }
@@ -44,7 +45,7 @@
   .acts input { flex:1; min-width:180px; height:42px; padding:0 12px; border-radius:10px; border:1px solid var(--line); background:var(--bg); font:inherit; }
   .copybox { align-self:stretch; background:#f8fafc; border:1px dashed #94a3b8; border-radius:10px; padding:10px 12px; white-space:pre-wrap; font-size:14px; }
   /* 아래 탭 — 쓸모 · 자주 묻는 질문 */
-  .tabs { border-top:1px solid var(--line); background:rgba(241,245,249,.5); padding:56px 0; }
+  .tabs { border-top:1px solid var(--line); background:rgba(241,245,249,.5); padding:24px 0 56px; }
   .tabbar { display:flex; padding:4px; border-radius:12px; background:#fff; border:1px solid var(--line); }
   .tabbar button { flex:1; height:48px; border:0; border-radius:9px; background:none; font:inherit; font-size:17px; font-weight:600; color:var(--muted); cursor:pointer; }
   .tabbar button.on { background:var(--brand); color:#fff; }
@@ -78,7 +79,7 @@
     </div>
     <!-- 설치는 대화로 — 하나 묻고 답 받고, 다음 것 (크리스 2026-09-11 『이런건 제니랑 대화하면서 하나둘씩 해나가야지』) -->
     <div class="guide" aria-label="설치 도우미 제니">
-      <div class="top"><b>설치 도우미 제니</b><small id="progt"></small><div class="bar"><i id="prog"></i></div></div>
+      <div class="top"><b>설치 도우미 제니</b><small id="progt"></small><div class="bar"><i id="prog"></i></div><select id="jump" title="단계 건너뛰기 · 다시 보기"><option value="">단계 고르기</option></select></div>
       <div id="log"></div>
       <div class="acts" id="acts"></div>
     </div>
@@ -198,6 +199,10 @@ function start() {
   ask([['시작할게요', () => step(1), true]]);
 }
 start();
+// 단계 건너뛰기 · 다시 보기 — 대본 채팅은 한 번 넘기면 돌아가기 어렵다(육묘매니저 방 조언)
+[['1', '1 크롬'], ['2', '2 지점 이름'], ['3', '3 구글 드라이브'], ['4', '4 대표 계정 확인'], ['5', '5 공유 폴더'], ['6', '6 파일 받기 · 설치'], ['7', '7 글로폭스 로그인'], ['8', '8 시작']]
+  .forEach(([v, l]) => $('jump').appendChild(Object.assign(document.createElement('option'), {value: v, textContent: l})));
+$('jump').onchange = e => { const v = +e.target.value; e.target.value = ''; if (v) { me(`${v}단계로 갈게요`); step(v); } };
 
 // 아래 탭
 const STRENGTHS = [
